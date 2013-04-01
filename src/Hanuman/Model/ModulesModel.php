@@ -252,6 +252,18 @@ class ModulesModel
 			);			
 		}
 		
+		// /src/ZendSkeletonModule/Model/UtilsModel.php
+		$filename = '/src/ZendSkeletonModule/Model/UtilsModel.php';
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		if (file_put_contents($newModuleDir . "/src/{$moduleName}/Model/UtilsModel.php", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $newModuleDir . "/src/{$moduleName}/Model/UtilsModel.php",
+			);			
+		}
+		
 		// /view/{$moduleViewsDir}/index/index.phtml
 		$filename = "/view/zend-skeleton-module/index/index.phtml";
 		$bufferStr = file_get_contents($templateDir . $filename);

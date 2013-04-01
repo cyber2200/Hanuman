@@ -9,6 +9,7 @@
 
 namespace ##MOUDLE_NAME##\Controller;
 
+use ##MOUDLE_NAME##\Model\UtilsModel;
 use Zend\Mvc\Controller\AbstractActionController;
 
 class IndexController extends AbstractActionController
