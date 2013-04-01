@@ -13,14 +13,17 @@ return array(
         ),
 		'template_map' => array(
 			'layout/hanuman' => __DIR__ . '/../view/layout/layout.phtml',
-		)
+		),
+		'strategies' => array(
+			'ViewJsonStrategy',
+		),
     ),
 	'router' => array(
 		'routes' => array(
 			'hanuman' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/hanuman[/:controller[/:action]]',
+                    'route'    => '/Hanuman[/:controller[/:action]]',
 					'constraints' => array(
 						'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
 						'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',

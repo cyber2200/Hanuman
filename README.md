@@ -34,10 +34,14 @@ Add the Hanuman module to the appication config:
 
 * Open ./config/application.config.php
 
-* Add the Hanuman module to the modules array so it will look exactly as follow:
+* Add the Hanuman module to the modules array so it will look as follow:
 `````
 'modules' => array(
 	'Application',
 	'Hanuman',
 ),
 `````
+
+Now, this is a code generator so we have to chnage the owner of the files to our web server user, in my case:
+
+* sudo chown -R www-data ./*
