@@ -334,6 +334,10 @@ class ModulesModel
 			{
 				$modulesArray[$i] = trim($modulesArray[$i]);
 				$modulesArray[$i] = trim($modulesArray[$i], "'");
+				if ($modulesArray[$i] == '')
+				{
+					unset($modulesArray[$i]);
+				}
 			}
 			
 			return array(
