@@ -304,4 +304,109 @@ class ModulesModel
 			'message' => $appDir,
 		);
 	}
+	
+	/**
+	 * @ToDo
+	 */
+	public function getModules()
+	{
+		$basePath = getcwd();
+		$configFile = $basePath . '/config/application.config.php';
+		$bufferStr = file_get_contents($configFile);
+		$startOfArray = strpos($bufferStr, "'modules' => array(");
+		$endOfArray = strpos($bufferStr, ")", $startOfArray);
+		$arrayLength = $endOfArray - $startOfArray + 1;
+		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
+		$end = strpos($originalString, ')');
+		$modulesArrayString = substr($originalString, 19, $end-19);
+		$modulesArray = explode(',', $modulesArrayString);
+		if (count($modulesArray) == 0)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't load modules",
+				'data' => array()
+			);			
+		}
+		else
+		{
+			for ($i = 0; $i < count($modulesArray); $i++)
+			{
+				$modulesArray[$i] = trim($modulesArray[$i]);
+				$modulesArray[$i] = trim($modulesArray[$i], "'");
+			}
+			
+			return array(
+				'success' => true,
+				'message' => print_r($modulesArray, true),
+				'data' => $modulesArray
+			);	
+		}
+	}
+	
+	/**
+	 * @ToDo
+	 */
+	public function deleteModule($moduleName)
+	{
+		// Delete the module from the application config
+		$basePath = getcwd();
+		$configFile = $basePath . '/config/application.config.php';
+		$bufferStr = file_get_contents($configFile);
+		$startOfArray = strpos($bufferStr, "'modules' => array(");
+		$endOfArray = strpos($bufferStr, ")", $startOfArray);
+		$arrayLength = $endOfArray - $startOfArray + 1;
+		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
+		$end = strpos($originalString, ')');
+		$modulesArrayString = substr($originalString, 19, $end-19);
+		$modulesArray = explode(',', $modulesArrayString);
+		
+		for ($i = 0; $i < count($modulesArray); $i++)
+		{
+			$modulesArray[$i] = trim($modulesArray[$i]);
+			if ($modulesArray[$i] == "'" . $moduleName . "'")
+			{
+				unset($modulesArray[$i]);
+			}
+		}
+		
+		$newBlock = "'modules' => array(" . implode(', ', $modulesArray) . ")";
+		
+		$bufferStr = str_replace($originalString, $newBlock, $bufferStr);
+		
+		if (file_put_contents($configFile, $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $configFile,
+			);
+		}
+		
+		$this->delFs($basePath . '/module/' . $moduleName);
+		
+		return array(
+			'success' => true,
+			'message' => '',
+		);			
+	}
+	
+	/**
+	 * @ToDo
+	 */
+	private function delFs($moduleDir) 
+	{	
+		$files = array_diff(scandir($moduleDir), array('.','..')); 
+		foreach ($files as $file) 
+		{ 
+			if (is_dir($moduleDir. '/' . $file))
+			{
+				$this->delFs($moduleDir . '/' . $file);
+			}
+			else
+			{
+				unlink($moduleDir . '/' . $file);
+			}
+		}
+		return rmdir($moduleDir); 
+	}
 }

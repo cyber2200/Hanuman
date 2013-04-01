@@ -2,7 +2,7 @@
 var Module = {
 	'createModule' : function()
 	{
-		$('#formFeeder').html("Creating new module...");
+		$('#createFormFeeder').html("Creating new module...");
 		$.ajax({
 			type : 'POST',
 			url : './modules/create',
@@ -11,17 +11,79 @@ var Module = {
 			{
 				if (jsonObj.success)
 				{
-					$('#formFeeder').html('Operation completed successfully!');	
-					$("#newModuleName").val('');					
+					$('#createFormFeeder').html('Operation completed successfully!');	
+					$("#newModuleName").val('');				
+					Module.getModules();					
 				}
 				else
 				{
-					$('#formFeeder').html(jsonObj.message);		
+					$('#createFormFeeder').html(jsonObj.message);		
+				}
+			}
+		});
+	},
+	'deleteModule' : function()
+	{	
+		if ($("#moduleSelect").val() == 'Application' || $("#moduleSelect").val() == 'Hanuman')
+		{
+			$('#deleteFormFeeder').html("Can't delete this module");	
+		}
+		else
+		{
+			var res = confirm("Are you sure?");
+			if (res)
+			{
+				$('#deleteFormFeeder').html("Deleting module...");
+				$.ajax({
+					type : 'POST',
+					url : './modules/delete',
+					data : 'moduleName=' + $("#moduleSelect").val(),
+					success : function(jsonObj)
+					{
+						if (jsonObj.success)
+						{
+							$('#deleteFormFeeder').html("Module has been deleted");
+							Module.getModules();
+						}
+						else
+						{
+							$('#deleteFormFeeder').html(jsonObj.message);		
+						}
+					}
+				});	
+			}
+		}
+	},
+	'getModules' : function()
+	{
+		$('#deleteFormFeeder').html("Getting modules...");
+		$.ajax({
+			type : 'POST',
+			url : './modules/get',
+			data : '',
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$('#deleteFormFeeder').html("");
+					$("#moduleSelect").empty();
+					for (var i = 0; i < jsonObj.data.length; i++)
+					{
+						$("#moduleSelect").append("<option>"+ jsonObj.data[i] +"</option");
+					}
+				}
+				else
+				{
+					$('#deleteFormFeeder').html(jsonObj.message);		
 				}
 			}
 		});
 	}
 };
+
+$(document).ready(function(){
+	Module.getModules();
+})
 </script>
 <style>
 .center {
@@ -34,8 +96,15 @@ var Module = {
 <div class="span7 center">
 	<form action="" onSubmit="return false;" class="form-search">
 		<b><u>Create new module</u></b><br /><br />
-		Module name: <input type="text" name="newModuleName" id="newModuleName" class="input-medium	" /> 
+		Module name: <input type="text" name="newModuleName" id="newModuleName" class="input-medium" /> 
 		<input class="btn" type="submit" value="Generate" onClick="Module.createModule();" /><br />
-		<div id="formFeeder"></div>
+		<div id="createFormFeeder"></div>
+	</form>
+	<br /><br />
+	<form action="" onSubmit="return false;" class="form-search">
+		<b><u>Delete module</u></b><br /><br />
+		Module name: <select id="moduleSelect" name="moduleSelect"></select> 
+		<input class="btn" type="submit" value="Delete" onClick="Module.deleteModule();" /><br />
+		<div id="deleteFormFeeder"></div>
 	</form>
 </div>

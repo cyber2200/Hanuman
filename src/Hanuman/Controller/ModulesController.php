@@ -29,4 +29,20 @@ class ModulesController extends AbstractActionController
 		$result = new JsonModel($modulesModel->generateModule($newModuleName));
         return $result;
 	}
+	
+	public function getAction()
+	{
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->getModules());
+        return $result;
+	}
+	
+	public function deleteAction()
+	{
+		$request = $this->getRequest();
+		$moduleName = $request->getPost('moduleName', null);
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->deleteModule($moduleName));
+        return $result;		
+	}
 }
