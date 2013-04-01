@@ -1,5 +1,5 @@
-Hanuman
-=======
+Hanuman (POC)
+=============
 
 Code generation module and API for ZF2.
 
