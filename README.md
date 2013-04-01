@@ -48,4 +48,4 @@ Now, this is a code generator so we have to chnage the owner of the files to our
 
 Now you should be ready to use Hanuman:
 
-* Browse the new module, for instance: http://raspi1/hanumanTests/hanumanTest1/public/Hanuman/
+* Browse the new module, for instance: http://localhost/hanumanTest1/public/Hanuman/
