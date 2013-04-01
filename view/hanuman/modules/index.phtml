@@ -1,0 +1,41 @@
+<script type="text/javascript">
+var Module = {
+	'createModule' : function()
+	{
+		$('#formFeeder').html("Creating new module...");
+		$.ajax({
+			type : 'POST',
+			url : './modules/create',
+			data : 'newModuleName=' + $("#newModuleName").val(),
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$('#formFeeder').html('Operation completed successfully!');	
+					$("#newModuleName").val('');					
+				}
+				else
+				{
+					$('#formFeeder').html(jsonObj.message);		
+				}
+			}
+		});
+	}
+};
+</script>
+<style>
+.center {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+	text-align: center;
+}
+</style>
+<div class="span7 center">
+	<form action="" onSubmit="return false;" class="form-search">
+		<b><u>Create new module</u></b><br /><br />
+		Module name: <input type="text" name="newModuleName" id="newModuleName" class="input-medium	" /> 
+		<input class="btn" type="submit" value="Generate" onClick="Module.createModule();" /><br />
+		<div id="formFeeder"></div>
+	</form>
+</div>
