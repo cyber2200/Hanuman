@@ -12,21 +12,20 @@ How to install
 
 1. Create new directory, in this case "hanumanTest1".
 
-mkdir hanumanTest1
+* mkdir hanumanTest1
 
 2. cd into the new dir: 
 
-cd ./hanumanTest1
+* cd ./hanumanTest1
 
 3. Create new ZF2 skelton application in the new dir using git:
 
-git clone https://github.com/zendframework/ZendSkeletonApplication.git ./
+* git clone https://github.com/zendframework/ZendSkeletonApplication.git ./
 
-php composer.phar self-update
+* php composer.phar self-update
 
-php composer.phar install
+* php composer.phar install
 
 4. Download and add the Hanuman module:
 
-git clone https://github.com/cyber2200/Hanuman.git ./module/Hanuman
-
+* git clone https://github.com/cyber2200/Hanuman.git ./module/Hanuman
