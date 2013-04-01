@@ -10,7 +10,7 @@ Please let me know what you think and if you have any suggestions or you want to
 How to install
 ==============
 
-Create new directory, in this case "hanumanTest1".
+Create new directory, in this case "hanumanTest1":
 
 * mkdir hanumanTest1
 
@@ -29,3 +29,15 @@ Create new ZF2 skelton application in the new dir using git:
 Download and add the Hanuman module:
 
 * git clone https://github.com/cyber2200/Hanuman.git ./module/Hanuman
+
+Add the Hanuman module to the appication config:
+
+* Open ./config/application.config.php
+
+* Add the Hanuman module to the modules array so it will look exactly as follow:
+`````
+'modules' => array(
+	'Application',
+	'Hanuman',
+),
+`````
