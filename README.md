@@ -1,7 +1,7 @@
 Hanuman
 =======
 
-Code generation module and API for ZF2.
+Code generation module for ZF2.
 
 The main goal is to create a full CMS using MVC architecture.
 
