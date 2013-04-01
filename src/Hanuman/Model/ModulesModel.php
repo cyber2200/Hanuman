@@ -271,9 +271,25 @@ class ModulesModel
 		$endOfArray = strpos($bufferStr, ")", $startOfArray);
 		$arrayLength = $endOfArray - $startOfArray + 1;
 		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
-		$newModuleEnrty = "\t'" . $moduleName . "',\n\t)";
-		$manipulatedString = str_replace(")", $newModuleEnrty, $originalString);
-		$bufferStr = str_replace($originalString, $manipulatedString, $bufferStr);
+		$end = strpos($originalString, ')');
+		$modulesArrayString = substr($originalString, 19, $end-19);
+		$modulesArray = explode(',', $modulesArrayString);
+		for ($i = 0; $i < count($modulesArray); $i++)
+		{
+			if (trim($modulesArray[$i]) == '')
+			{
+				unset($modulesArray[$i]);
+			}
+			else
+			{
+				$modulesArray[$i] = trim($modulesArray[$i]);
+			}
+		}
+		$modulesArray[] = "'" . $moduleName . "'";
+		
+		$newBlock = "'modules' => array(" . implode(', ', $modulesArray) . ")";
+		
+		$bufferStr = str_replace($originalString, $newBlock, $bufferStr);
 		
 		if (file_put_contents($appConfigPath, $bufferStr) === FALSE)
 		{
