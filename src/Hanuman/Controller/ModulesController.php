@@ -46,6 +46,9 @@ class ModulesController extends AbstractActionController
         return $result;		
 	}
 	
+	/**
+	 * @ToDo
+	 */
 	public function editAction()
 	{	
 		$this->layout('layout/hanuman');
