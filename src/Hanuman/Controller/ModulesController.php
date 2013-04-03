@@ -45,4 +45,10 @@ class ModulesController extends AbstractActionController
 		$result = new JsonModel($modulesModel->deleteModule($moduleName));
         return $result;		
 	}
+	
+	public function editAction()
+	{	
+		$this->layout('layout/hanuman');
+		return array();
+	}
 }

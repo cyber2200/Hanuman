@@ -78,6 +78,10 @@ var Module = {
 				}
 			}
 		});
+	},
+	'editModule' : function()
+	{
+		document.location = './modules/edit/' + $("#moduleSelect").val();
 	}
 };
 
@@ -104,7 +108,9 @@ $(document).ready(function(){
 	<form action="" onSubmit="return false;" class="form-search">
 		<b><u>Delete module</u></b><br /><br />
 		Module name: <select id="moduleSelect" name="moduleSelect"></select> 
-		<input class="btn" type="submit" value="Delete" onClick="Module.deleteModule();" /><br />
+		<input class="btn" type="submit" value="Delete" onClick="Module.deleteModule();" />
+		<input class="btn" type="submit" value="Edit" onClick="Module.editModule();" />
+		<br />
 		<div id="deleteFormFeeder"></div>
 	</form>
 </div>

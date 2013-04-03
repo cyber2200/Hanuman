@@ -23,7 +23,7 @@ return array(
 			'hanuman' => array(
                 'type'    => 'Segment',
                 'options' => array(
-                    'route'    => '/Hanuman[/:controller[/:action]]',
+                    'route'    => '/Hanuman[/:controller[/:action[/:param1]]]',
 					'constraints' => array(
 						'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
 						'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
@@ -39,7 +39,7 @@ return array(
                     'default' => array(
                         'type'    => 'Segment',
                         'options' => array(
-                            'route'    => '/[:controller[/:action]]',
+                            'route'    => '/[:controller[/:action[/:param1]]]',
                             'constraints' => array(
                                 'controller' => '[a-zA-Z][a-zA-Z0-9_-]*',
                                 'action'     => '[a-zA-Z][a-zA-Z0-9_-]*',
