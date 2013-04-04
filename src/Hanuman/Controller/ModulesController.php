@@ -52,6 +52,6 @@ class ModulesController extends AbstractActionController
 	public function editAction()
 	{	
 		$this->layout('layout/hanuman');
-		return array();
+		return array('selectedModule' => $this->getEvent()->getRouteMatch()->getParam('param1'));
 	}
 }

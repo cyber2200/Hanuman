@@ -98,19 +98,19 @@ $(document).ready(function(){
 }
 </style>
 <div class="span7 center">
+	<br /><br />
 	<form action="" onSubmit="return false;" class="form-search">
-		<b><u>Create new module</u></b><br /><br />
 		Module name: <input type="text" name="newModuleName" id="newModuleName" class="input-medium" /> 
 		<input class="btn" type="submit" value="Generate" onClick="Module.createModule();" /><br />
 		<div id="createFormFeeder"></div>
 	</form>
 	<br /><br />
 	<form action="" onSubmit="return false;" class="form-search">
-		<b><u>Delete module</u></b><br /><br />
 		Module name: <select id="moduleSelect" name="moduleSelect"></select> 
 		<input class="btn" type="submit" value="Delete" onClick="Module.deleteModule();" />
 		<input class="btn" type="submit" value="Edit" onClick="Module.editModule();" />
 		<br />
 		<div id="deleteFormFeeder"></div>
 	</form>
+	<br /><br />
 </div>
