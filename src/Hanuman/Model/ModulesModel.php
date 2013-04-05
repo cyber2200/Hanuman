@@ -240,8 +240,8 @@ class ModulesModel
 			);						
 		}
 		
-		// /src/ZendSkeletonModule/Controller/IndexController.php
-		$filename = '/src/ZendSkeletonModule/Controller/IndexController.php';
+		// /src/TempModule/Controller/IndexController.php
+		$filename = '/src/TempModule/Controller/IndexController.php';
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
 		$bufferStr = str_replace('##CONTROLLER_NAME##', 'Index', $bufferStr);
@@ -254,8 +254,8 @@ class ModulesModel
 			);			
 		}
 		
-		// /src/ZendSkeletonModule/Model/UtilsModel.php
-		$filename = '/src/ZendSkeletonModule/Model/UtilsModel.php';
+		// /src/TempModule/Model/UtilsModel.php
+		$filename = '/src/TempModule/Model/UtilsModel.php';
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
 		$bufferStr = str_replace('##MODEL_NAME##', 'UtilsModel', $bufferStr);
@@ -269,7 +269,7 @@ class ModulesModel
 		}
 		
 		// /view/{$moduleViewsDir}/index/index.phtml
-		$filename = "/view/zend-skeleton-module/index/index.phtml";
+		$filename = "/view/temp-module/index/index.phtml";
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
 		$bufferStr = str_replace('##CONTROLLER_NAME##', 'Index', $bufferStr);
@@ -500,9 +500,9 @@ class ModulesModel
 	
 	public function createController($moduleName, $newControllerName)
 	{
-		// /src/ZendSkeletonModule/Controller/IndexController.php
+		// /src/TempModule/Controller/IndexController.php
 		$templateDir = __DIR__ . '/templates/module';
-		$filename = '/src/ZendSkeletonModule/Controller/IndexController.php';
+		$filename = '/src/TempModule/Controller/IndexController.php';
 		$moduleDir = getcwd() . '/module/' . $moduleName;
 		
 		$bufferStr = file_get_contents($templateDir . $filename);
@@ -600,7 +600,7 @@ class ModulesModel
 		}
 		
 		// /view/{$moduleViewsDir}/index/index.phtml
-		$filename = "/view/zend-skeleton-module/index/index.phtml";
+		$filename = "/view/temp-module/index/index.phtml";
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
 		$bufferStr = str_replace('##CONTROLLER_NAME##', $newControllerName, $bufferStr);
@@ -626,8 +626,8 @@ class ModulesModel
 		$moduleDir = getcwd() . '/module/' . $moduleName;
 		$templateDir = __DIR__ . '/templates/module';
 		
-		// /src/ZendSkeletonModule/Model/UtilsModel.php
-		$filename = '/src/ZendSkeletonModule/Model/UtilsModel.php';
+		// /src/TempModule/Model/UtilsModel.php
+		$filename = '/src/TempModule/Model/UtilsModel.php';
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
 		$bufferStr = str_replace('##MODEL_NAME##', $newModelName, $bufferStr);
