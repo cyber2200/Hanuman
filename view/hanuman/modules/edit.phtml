@@ -51,25 +51,32 @@ var Module = {
 	},	
 	addController : function()
 	{
-		$('#controllersFeeder').html('Processing...');
-		$.ajax({
-			type : 'POST',
-			url : '<?=$baseUrl;?>/Hanuman/modules/addcontroller',
-			data : 'moduleName=' + selectedModule + '&newControllerName=' + $("#newcontrollerName").val() + '&crud=' + $("#crud").is(":checked"),
-			success : function(jsonObj)
-			{
-				if (jsonObj.success)
+		if ($("#crud").is(":checked"))
+		{
+			Module.openPopUp('scaffoldForm');
+		}
+		else
+		{
+			$('#controllersFeeder').html('Processing...');
+			$.ajax({
+				type : 'POST',
+				url : '<?=$baseUrl;?>/Hanuman/modules/addcontroller',
+				data : 'moduleName=' + selectedModule + '&newControllerName=' + $("#newcontrollerName").val() + '&crud=' + $("#crud").is(":checked"),
+				success : function(jsonObj)
 				{
-					$('#controllersFeeder').html('Created successfully');
-					$("#newcontrollerName").val('');
-					Module.getControllers();
+					if (jsonObj.success)
+					{
+						$('#controllersFeeder').html('Created successfully');
+						$("#newcontrollerName").val('');
+						Module.getControllers();
+					}
+					else
+					{
+						$('#controllersFeeder').html(jsonObj.message);		
+					}
 				}
-				else
-				{
-					$('#controllersFeeder').html(jsonObj.message);		
-				}
-			}
-		});	
+			});	
+		}
 	},
 	delController : function()
 	{
@@ -129,6 +136,25 @@ var Module = {
 	editModel : function()
 	{
 	
+	},
+	addField : function()
+	{
+		var select = "<select>";
+		select += '<option>VARCHAR(255)</option>';
+		select += '<option>INT(255)</option>';
+		select += '<option>TEXT</option>';
+		select += "</select>";
+		var newField = $("#newField").val();
+		$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
+		$("#newField").val('');
+	},
+	closePopUp : function(id)
+	{
+		$("#" + id).hide();
+	},
+	openPopUp : function(id)
+	{
+		$("#" + id).show();
 	}
 };
 
@@ -174,4 +200,34 @@ $(document).ready(function(){
 	</form>
 	<br /><br />
 	<a href="http://raspi1/hanumanTests/hanumanTest1/public/Hanuman/modules"><i class="icon-backward"></i></a>
+</div>
+
+<div style="display: none; position: fixed; top: 60px; width: 100%;" id="scaffoldForm">
+	<center>
+		<div style="margin: 0 auto; border: 1px solid black; background-color: white; width: 600px; height: 500px; overflow-y: scroll;">
+			<table id="crudTbl" class="table">
+				<tr>
+					<th>
+					Field Name
+					</th>
+					<th>
+					Type
+					</th>
+				</tr>
+				<tr>
+					<td>
+						ID
+					</td>
+					<td>
+						INT(255), Auto Increment, Primary Key
+					</td>
+				</tr>
+			</table>
+			<form action="" onSubmit="return false;" class="form-search">
+				<input class="input-medium" type="text" id="newField" /> <input onClick="Module.addField();" class="btn" type="button" value="Add Field" />
+				<br /><br />
+				<input class="btn" type="button" value="Generate" /> <input onClick="Module.closePopUp('scaffoldForm');" class="btn" type="button" value="Cancel" />
+			</form>
+		</div>
+	<center>
 </div>
