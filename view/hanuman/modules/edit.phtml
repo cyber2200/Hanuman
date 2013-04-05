@@ -1,0 +1,174 @@
+<script type="text/javascript">
+var selectedModule = '<?=$selectedModule;?>';
+var Module = {
+	'getControllers' : function()
+	{
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/getcontrollers',
+			data : 'moduleName=' + selectedModule,
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$("#controllerSelect").empty();
+					for (var i = 0; i < jsonObj.data.length; i++)
+					{
+						$("#controllerSelect").append("<option value='"+ jsonObj.data[i] +"'>"+ jsonObj.data[i] +"</option>");
+					}
+					$('#controllersFeeder').html('<br />');
+				}
+				else
+				{
+					$('#controllersFeeder').html(jsonObj.message);		
+				}
+			}
+		});
+	},
+	'getModels' : function()
+	{
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/getmodels',
+			data : 'moduleName=' + selectedModule,
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$("#modelsSelect").empty();
+					for (var i = 0; i < jsonObj.data.length; i++)
+					{
+						$("#modelsSelect").append("<option value='"+ jsonObj.data[i] +"'>"+ jsonObj.data[i] +"</option>");
+					}
+					$('#modelsFeeder').html('<br />');
+				}
+				else
+				{
+					$('#modelsFeeder').html(jsonObj.message);		
+				}
+			}
+		});
+	},	
+	addController : function()
+	{
+		$('#controllersFeeder').html('Processing...');
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/addcontroller',
+			data : 'moduleName=' + selectedModule + '&newControllerName=' + $("#newcontrollerName").val(),
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$('#controllersFeeder').html('Created successfully');
+					$("#newcontrollerName").val('');
+					Module.getControllers();
+				}
+				else
+				{
+					$('#controllersFeeder').html(jsonObj.message);		
+				}
+			}
+		});	
+	},
+	delController : function()
+	{
+	
+	},
+	editController : function()
+	{
+	
+	},
+	addModel : function()
+	{
+		$('#modelsFeeder').html('Processing...');
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/addmodel',
+			data : 'moduleName=' + selectedModule + '&newModelName=' + $("#newModelName").val(),
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$('#modelsFeeder').html('Created successfully');
+					$("#newModelName").val('');
+					Module.getModels();
+				}
+				else
+				{
+					$('#modelsFeeder').html(jsonObj.message);		
+				}
+			}
+		});	
+	},
+	delModel : function()
+	{
+		var res = confirm("Are you sure?");
+		if (res)
+		{
+			$('#modelsFeeder').html('Processing...');
+			$.ajax({
+				type : 'POST',
+				url : '<?=$baseUrl;?>/Hanuman/modules/delmodel',
+				data : 'moduleName=' + selectedModule + '&modelName=' + $("#modelsSelect").val(),
+				success : function(jsonObj)
+				{
+					if (jsonObj.success)
+					{
+						$('#modelsFeeder').html('Deleted successfully');
+						Module.getModels();
+					}
+					else
+					{
+						$('#modelsFeeder').html(jsonObj.message);
+					}
+				}
+			});	
+		}
+	},
+	editModel : function()
+	{
+	
+	}
+};
+
+$(document).ready(function(){
+	Module.getControllers();
+	Module.getModels();
+})
+</script>
+
+<style>
+.center {
+    float: none;
+    margin-left: auto;
+    margin-right: auto;
+	text-align: center;
+}
+</style>
+<div class="span7 center">
+	Selected Module: <b><?=$selectedModule;?></b>
+	<br /><br />
+	<form action="" onSubmit="return false;" class="form-search">
+		Controller name: <input type="text" name="newcontrollerName" id="newcontrollerName" class="input-medium" /> 
+		<input class="btn" type="submit" value="Generate" onClick="Module.addController();" />
+		<br /><br />
+		Controller name: <select id="controllerSelect" name="controllerSelect"></select> 
+		<input class="btn" type="submit" value="Delete" onClick="Module.delController();" />
+		<input class="btn" type="submit" value="Edit" onClick="Module.editController();" />
+		<div id="controllersFeeder">Loading...</div>
+	</form>
+	<br /><br />
+	<form action="" onSubmit="return false;" class="form-search">
+		Model name: <input type="text" name="newModelName" id="newModelName" class="input-medium" /> 
+		<input class="btn" type="submit" value="Generate" onClick="Module.addModel();" />
+		<br /><br />
+		Model name: <select id="modelsSelect" name="modelsSelect"></select> 
+		<input class="btn" type="submit" value="Delete" onClick="Module.delModel();" />
+		<input class="btn" type="submit" value="Edit" onClick="Module.editModel();" />
+		<br />
+		<div id="modelsFeeder">Loading...</div>
+	</form>
+	<br /><br />
+	<a href="http://raspi1/hanumanTests/hanumanTest1/public/Hanuman/modules"><i class="icon-backward"></i></a>
+</div>
