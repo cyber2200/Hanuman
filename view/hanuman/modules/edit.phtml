@@ -55,7 +55,7 @@ var Module = {
 		$.ajax({
 			type : 'POST',
 			url : '<?=$baseUrl;?>/Hanuman/modules/addcontroller',
-			data : 'moduleName=' + selectedModule + '&newControllerName=' + $("#newcontrollerName").val(),
+			data : 'moduleName=' + selectedModule + '&newControllerName=' + $("#newcontrollerName").val() + '&crud=' + $("#crud").is(":checked"),
 			success : function(jsonObj)
 			{
 				if (jsonObj.success)
@@ -151,7 +151,10 @@ $(document).ready(function(){
 	<br /><br />
 	<form action="" onSubmit="return false;" class="form-search">
 		Controller name: <input type="text" name="newcontrollerName" id="newcontrollerName" class="input-medium" /> 
-		<input class="btn" type="submit" value="Generate" onClick="Module.addController();" />
+		<input class="btn" type="submit" value="Generate" onClick="Module.addController();" /><br />
+		<label class="checkbox">
+			<input id="crud" type="checkbox"> Create CRUD scaffold
+		</label>
 		<br /><br />
 		Controller name: <select id="controllerSelect" name="controllerSelect"></select> 
 		<input class="btn" type="submit" value="Delete" onClick="Module.delController();" />

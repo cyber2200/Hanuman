@@ -513,7 +513,7 @@ class ModulesModel
 		{
 			return array(
 				'success' => false,
-				'message' => "Can't write file: " . $newModuleDir . "/src/{$moduleName}/Controller/IndexController.php",
+				'message' => "Can't write file: " . $moduleDir . "/src/{$moduleName}/Controller/". $newControllerName ."Controller.php",
 			);			
 		}
 		

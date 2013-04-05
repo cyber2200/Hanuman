@@ -5,7 +5,8 @@ return array(
             'Hanuman\Controller\Index' => 'Hanuman\Controller\IndexController', 
 			'Hanuman\Controller\Modules' => 'Hanuman\Controller\ModulesController', 
             'index' => 'Hanuman\Controller\IndexController',
-        ),
+        	'Hanuman\Controller\Cms' => 'Hanuman\Controller\CmsController',
+		),
     ),
     'view_manager' => array(
         'template_path_stack' => array(
