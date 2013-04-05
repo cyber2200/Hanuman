@@ -258,6 +258,8 @@ class ModulesModel
 		$filename = '/src/ZendSkeletonModule/Model/UtilsModel.php';
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##MODEL_NAME##', 'UtilsModel', $bufferStr);
+		
 		if (file_put_contents($newModuleDir . "/src/{$moduleName}/Model/UtilsModel.php", $bufferStr) === FALSE)
 		{
 			return array(
@@ -617,5 +619,50 @@ class ModulesModel
 			'message' => '',
 			'data' => ''
 		);			
+	}
+	
+	public function createModel($moduleName, $newModelName)
+	{
+		$moduleDir = getcwd() . '/module/' . $moduleName;
+		$templateDir = __DIR__ . '/templates/module';
+		
+		// /src/ZendSkeletonModule/Model/UtilsModel.php
+		$filename = '/src/ZendSkeletonModule/Model/UtilsModel.php';
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##MODEL_NAME##', $newModelName, $bufferStr);
+		
+		if (file_put_contents($moduleDir . "/src/{$moduleName}/Model/". $newModelName ."Model.php", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $newModuleDir . "/src/{$moduleName}/Model/UtilsModel.php",
+			);			
+		}
+		
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => ''
+		);	
+	}
+	
+	public function delModel($moduleName, $modelName)
+	{
+		$moduleDir = getcwd() . '/module/' . $moduleName;
+		if (! unlink($moduleDir . "/src/{$moduleName}/Model/". $modelName .".php"))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't delete file: " . $moduleDir . "/src/{$moduleName}/Model/". $modelName ."Model.php",
+				'data' => ''
+			);			
+		}
+		
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => ''
+		);	
 	}
 }
