@@ -65,7 +65,7 @@ var Module = {
 			{
 				if (jsonObj.success)
 				{
-					$('#deleteFormFeeder').html("");
+					$('#deleteFormFeeder').html("<br />");
 					$("#moduleSelect").empty();
 					for (var i = 0; i < jsonObj.data.length; i++)
 					{
@@ -102,7 +102,7 @@ $(document).ready(function(){
 	<form action="" onSubmit="return false;" class="form-search">
 		Module name: <input type="text" name="newModuleName" id="newModuleName" class="input-medium" /> 
 		<input class="btn" type="submit" value="Generate" onClick="Module.createModule();" /><br />
-		<div id="createFormFeeder"></div>
+		<div id="createFormFeeder"><br /></div>
 	</form>
 	<br /><br />
 	<form action="" onSubmit="return false;" class="form-search">
@@ -110,7 +110,7 @@ $(document).ready(function(){
 		<input class="btn" type="submit" value="Delete" onClick="Module.deleteModule();" />
 		<input class="btn" type="submit" value="Edit" onClick="Module.editModule();" />
 		<br />
-		<div id="deleteFormFeeder"></div>
+		<div id="deleteFormFeeder"><br /></div>
 	</form>
 	<br /><br />
 </div>

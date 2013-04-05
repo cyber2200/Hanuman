@@ -244,6 +244,8 @@ class ModulesModel
 		$filename = '/src/ZendSkeletonModule/Controller/IndexController.php';
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', 'Index', $bufferStr);
+		
 		if (file_put_contents($newModuleDir . "/src/{$moduleName}/Controller/IndexController.php", $bufferStr) === FALSE)
 		{
 			return array(
@@ -268,6 +270,9 @@ class ModulesModel
 		$filename = "/view/zend-skeleton-module/index/index.phtml";
 		$bufferStr = file_get_contents($templateDir . $filename);
 		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', 'Index', $bufferStr);
+		$bufferStr = str_replace('##ACTION_NAME##', 'index', $bufferStr);
+		
 		if (file_put_contents($newModuleDir . "/view/{$moduleViewsDir}/index/index.phtml", $bufferStr) === FALSE)
 		{
 			return array(
@@ -424,5 +429,193 @@ class ModulesModel
 			}
 		}
 		return rmdir($moduleDir); 
+	}
+	
+	public function getControllers($moduleName)
+	{
+		$basePath = getcwd();
+		$controllersPath = $basePath . '/module/' . $moduleName . '/src/' . $moduleName . '/Controller';
+		$controllersArr = array();
+		if($handle = opendir($controllersPath))
+		{
+			while (false !== ($entry = readdir($handle))) 
+			{
+				if ($entry != "." && $entry != "..") 
+				{
+					$controllersArr[] = str_replace('.php', '', $entry);
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't read the direcotry: " . $controllersPath,
+				'data' => ''
+			);			
+		}
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => $controllersArr
+		);	
+	}
+	
+	public function getModels($moduleName)
+	{
+		$basePath = getcwd();
+		$modelsPath = $basePath . '/module/' . $moduleName . '/src/' . $moduleName . '/Model';
+		$modelsArr = array();
+		if($handle = opendir($modelsPath))
+		{
+			while (false !== ($entry = readdir($handle))) 
+			{
+				if ($entry != "." && $entry != "..") 
+				{
+					if (! is_dir($modelsPath . '/' . $entry))
+					{
+						$modelsArr[] = str_replace('.php', '', $entry);
+					}
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't read the direcotry: " . $modelsPath,
+				'data' => ''
+			);	
+		}
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => $modelsArr
+		);	
+	}
+	
+	public function createController($moduleName, $newControllerName)
+	{
+		// /src/ZendSkeletonModule/Controller/IndexController.php
+		$templateDir = __DIR__ . '/templates/module';
+		$filename = '/src/ZendSkeletonModule/Controller/IndexController.php';
+		$moduleDir = getcwd() . '/module/' . $moduleName;
+		
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', $newControllerName, $bufferStr);
+		
+		if (file_put_contents($moduleDir . "/src/{$moduleName}/Controller/". $newControllerName ."Controller.php", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $newModuleDir . "/src/{$moduleName}/Controller/IndexController.php",
+			);			
+		}
+		
+		$bufferStr = file_get_contents($moduleDir . '/config/module.config.php');
+		$startStr = "'controllers'";
+		$start = strpos($bufferStr, $startStr);
+		$block = substr($bufferStr, $start + strlen($startStr));
+		
+		$innerArrayEnd = 0;
+		$c = -1;
+		$r = 0;
+		for ($i = 0; $i < strlen($block); $i++)
+		{
+			if ($block[$i] == '(')
+			{
+				if ($c == -1)
+				{
+					$c = 0;
+				}
+				$c++;
+			}
+			
+			if ($block[$i] == ')')
+			{
+				$c--;
+				if ($c == 1)
+				{
+					$innerArrayEnd = $i;
+				}
+			}
+			
+			if ($c == 0)
+			{
+				$r++;
+				$c = -1;
+			}
+			
+			if ($r == 1)
+			{
+				break;
+			}
+		}
+		$block = substr($block, 0, $innerArrayEnd);
+		$blockRep = substr($block, 0, $innerArrayEnd);
+		$blockRep = $blockRep .  "\t'". $moduleName ."\Controller\\". $newControllerName ."' => '". $moduleName ."\Controller\\". $newControllerName ."Controller',\n\t\t";
+		$bufferStr = str_replace($block, $blockRep, $bufferStr);
+		if (file_put_contents($moduleDir . '/config/module.config.php', $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $templateDir . $filename
+			);			
+		}
+		
+		$moduleViewsDir = $moduleName;
+		$moduleViewsDir[0] = strtolower($moduleViewsDir[0]);
+		$caps = array();
+		for ($i = 0; $i < strlen($moduleViewsDir); $i++)
+		{
+			if (ctype_upper($moduleViewsDir[$i]))
+			{
+				$caps[] = $i;
+			}
+		}
+		$p1 = '';
+		$p2 = '';
+		$offset = 0;
+		foreach ($caps as $cap)
+		{
+			$p1 = substr($moduleViewsDir, 0, $cap+$offset);
+			$p2 = substr($moduleViewsDir, $cap+$offset);
+			$p1[strlen($p1)] = '-';
+			$p2[0] = strtolower($p2[0]);
+			$offset++;
+			$moduleViewsDir = $p1 . $p2;
+		}
+		
+		if (! mkdir($moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($newControllerName)))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't create direcotry: " . $moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($newControllerName)
+			);
+		}
+		
+		// /view/{$moduleViewsDir}/index/index.phtml
+		$filename = "/view/zend-skeleton-module/index/index.phtml";
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', $newControllerName, $bufferStr);
+		$bufferStr = str_replace('##ACTION_NAME##', 'index', $bufferStr);
+		
+		if (file_put_contents($moduleDir . "/view/{$moduleViewsDir}/". strtolower($newControllerName) ."/index.phtml", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $newModuleDir . "/view/{$moduleViewsDir}/index/index.phtml",
+			);			
+		}
+		
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => ''
+		);			
 	}
 }

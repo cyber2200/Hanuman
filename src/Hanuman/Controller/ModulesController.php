@@ -52,6 +52,37 @@ class ModulesController extends AbstractActionController
 	public function editAction()
 	{	
 		$this->layout('layout/hanuman');
-		return array('selectedModule' => $this->getEvent()->getRouteMatch()->getParam('param1'));
+		return array(
+			'selectedModule' => $this->getEvent()->getRouteMatch()->getParam('param1'),
+			'baseUrl' => $this->request->getBasePath()
+		);
+	}
+	
+	public function getcontrollersAction()
+	{
+		$request = $this->getRequest();
+		$moduleName = $request->getPost('moduleName', null);
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->getControllers($moduleName));
+        return $result;				
+	}
+	
+	public function getmodelsAction()
+	{
+		$request = $this->getRequest();
+		$moduleName = $request->getPost('moduleName', null);
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->getModels($moduleName));
+        return $result;				
+	}
+	
+	public function addcontrollerAction()
+	{
+		$request = $this->getRequest();
+		$newControllerName = $request->getPost('newControllerName', null);
+		$moduleName = $request->getPost('moduleName', null);
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->createController($moduleName, $newControllerName));
+        return $result;						
 	}
 }
