@@ -389,7 +389,7 @@ class ModulesModel
 			);
 		}
 		
-		$this->delFs($basePath . '/module/' . $moduleName);
+		$this->delFs(getcwd() . '/module/' . $moduleName);
 		
 		return array(
 			'success' => true,
@@ -401,7 +401,7 @@ class ModulesModel
 	 * @ToDo
 	 */
 	private function delFs($moduleDir) 
-	{	
+	{
 		$files = array_diff(scandir($moduleDir), array('.','..')); 
 		foreach ($files as $file) 
 		{ 
@@ -501,49 +501,35 @@ class ModulesModel
 			);			
 		}
 		
+		// Adding to invokables
 		$bufferStr = file_get_contents($moduleDir . '/config/module.config.php');
-		$startStr = "'controllers'";
-		$start = strpos($bufferStr, $startStr);
-		$block = substr($bufferStr, $start + strlen($startStr));
-		
-		$innerArrayEnd = 0;
-		$c = -1;
-		$r = 0;
-		for ($i = 0; $i < strlen($block); $i++)
+		preg_match("/'controllers'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		preg_match("/'invokables'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$invokableArray = explode(",", $matches[1]);
+		$invokableArray[] = "'" . $moduleName ."\Controller\\". $newControllerName ."' => '". $moduleName ."\Controller\\". $newControllerName ."Controller'";
+		$arrStr = '';
+		for ($i = 0; $i < count($invokableArray); $i++)
 		{
-			if ($block[$i] == '(')
+			if (trim($invokableArray[$i]) == '')
 			{
-				if ($c == -1)
-				{
-					$c = 0;
-				}
-				$c++;
-			}
-			
-			if ($block[$i] == ')')
-			{
-				$c--;
-				if ($c == 1)
-				{
-					$innerArrayEnd = $i;
-				}
-			}
-			
-			if ($c == 0)
-			{
-				$r++;
-				$c = -1;
-			}
-			
-			if ($r == 1)
-			{
-				break;
+				unset($invokableArray[$i]);
 			}
 		}
-		$block = substr($block, 0, $innerArrayEnd);
-		$blockRep = substr($block, 0, $innerArrayEnd);
-		$blockRep = $blockRep .  "\t'". $moduleName ."\Controller\\". $newControllerName ."' => '". $moduleName ."\Controller\\". $newControllerName ."Controller',\n\t\t";
-		$bufferStr = str_replace($block, $blockRep, $bufferStr);
+		
+		foreach ($invokableArray as $controller)
+		{
+			$arrStr .= "\t\t\t" . trim($controller) . ",\n";
+		}
+		$arrStr .= "\t\t";
+		
+$newStr =<<< EOF
+'controllers' => array(
+		'invokables' => array(\n##INVOKABLES##)
+EOF;
+		
+		$newStr = str_replace("##INVOKABLES##", $arrStr, $newStr);
+		$bufferStr = str_replace($origString, $newStr, $bufferStr);
 		if (file_put_contents($moduleDir . '/config/module.config.php', $bufferStr) === FALSE)
 		{
 			return array(
@@ -552,6 +538,7 @@ class ModulesModel
 			);			
 		}
 		
+		// Turning from ModuleName to module-name
 		$moduleViewsDir = $moduleName;
 		$moduleViewsDir[0] = strtolower($moduleViewsDir[0]);
 		$caps = array();
