@@ -400,21 +400,21 @@ class ModulesModel
 	/**
 	 * @ToDo
 	 */
-	private function delFs($moduleDir) 
+	private function delFs($dir) 
 	{
-		$files = array_diff(scandir($moduleDir), array('.','..')); 
+		$files = array_diff(scandir($dir), array('.','..')); 
 		foreach ($files as $file) 
 		{ 
-			if (is_dir($moduleDir. '/' . $file))
+			if (is_dir($dir. '/' . $file))
 			{
-				$this->delFs($moduleDir . '/' . $file);
+				$this->delFs($dir . '/' . $file);
 			}
 			else
 			{
-				unlink($moduleDir . '/' . $file);
+				unlink($dir . '/' . $file);
 			}
 		}
-		return rmdir($moduleDir); 
+		return rmdir($dir); 
 	}
 	
 	public function getControllers($moduleName)
@@ -635,5 +635,101 @@ EOF;
 			'message' => '',
 			'data' => ''
 		);	
+	}
+	
+	public function delController($moduleName, $controllerName)
+	{
+		$moduleDir = getcwd() . '/module/' . $moduleName;
+		
+		// Removing from invokables
+		$bufferStr = file_get_contents($moduleDir . '/config/module.config.php');
+		preg_match("/'controllers'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		preg_match("/'invokables'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$invokableArray = explode(",", $matches[1]);
+		$out = '';
+		for ($i = 0; $i < count($invokableArray); $i++)
+		{
+			//$filter = "/'{$moduleName}\Controller\\" . str_replace("Controller", "", $controllerName) . "' => '{$moduleName}\Controller\\" . $controllerName . "'/s";
+			//preg_match($filter, trim($invokableArray[$i]), $matches);
+			
+			$str = "'{$moduleName}\Controller\\" . str_replace("Controller", "", $controllerName) . "' => '{$moduleName}\Controller\\" . $controllerName . "'";
+			if ($str == trim($invokableArray[$i]))
+			{
+				unset($invokableArray[$i]);
+			}
+		}	
+		
+		$arrStr = '';
+		foreach ($invokableArray as $controller)
+		{
+			if (trim($controller) != '')
+			{
+				$arrStr .= "\t\t\t" . trim($controller) . ",\n";
+			}
+		}
+		$arrStr .= "\t\t";
+		
+$newStr =<<< EOF
+'controllers' => array(
+		'invokables' => array(\n##INVOKABLES##)
+EOF;
+		
+		$newStr = str_replace("##INVOKABLES##", $arrStr, $newStr);
+		$bufferStr = str_replace($origString, $newStr, $bufferStr);
+		
+		if (file_put_contents($moduleDir . '/config/module.config.php', $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $templateDir . $filename
+			);
+		}
+		
+		if (! unlink($moduleDir . '/src/'. $moduleName .'/Controller/' . $controllerName . '.php'))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't delete file: " . $moduleDir . '/src/'. $moduleName .'/Controller/' . $controllerName . '.php'
+			);						
+		}
+		
+		// Turning from ModuleName to module-name
+		$moduleViewsDir = $moduleName;
+		$moduleViewsDir[0] = strtolower($moduleViewsDir[0]);
+		$caps = array();
+		for ($i = 0; $i < strlen($moduleViewsDir); $i++)
+		{
+			if (ctype_upper($moduleViewsDir[$i]))
+			{
+				$caps[] = $i;
+			}
+		}
+		$p1 = '';
+		$p2 = '';
+		$offset = 0;
+		foreach ($caps as $cap)
+		{
+			$p1 = substr($moduleViewsDir, 0, $cap+$offset);
+			$p2 = substr($moduleViewsDir, $cap+$offset);
+			$p1[strlen($p1)] = '-';
+			$p2[0] = strtolower($p2[0]);
+			$offset++;
+			$moduleViewsDir = $p1 . $p2;
+		}
+		$controllerViewDir = str_replace('Controller', '', $controllerName);
+		if (! $this->delFs($moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($controllerViewDir)))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't delete directory: " . $moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($controllerViewDir)
+			);		
+		}
+		
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => ''
+		);		
 	}
 }

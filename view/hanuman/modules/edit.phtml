@@ -85,7 +85,24 @@ var Module = {
 	},
 	delController : function()
 	{
-	
+		$('#controllersFeeder').html('Processing...');
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/delcontroller',
+			data : 'moduleName=' + selectedModule + '&controllerName=' + $("#controllerSelect").val(),
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$('#controllersFeeder').html('Deleted successfully');
+					Module.getControllers();
+				}
+				else
+				{
+					$('#controllersFeeder').html(jsonObj.message);		
+				}
+			}
+		});	
 	},
 	editController : function()
 	{

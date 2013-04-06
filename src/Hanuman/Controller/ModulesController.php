@@ -86,6 +86,16 @@ class ModulesController extends AbstractActionController
         return $result;						
 	}
 	
+	public function delcontrollerAction()
+	{
+		$request = $this->getRequest();
+		$controllerName = $request->getPost('controllerName', null);
+		$moduleName = $request->getPost('moduleName', null);
+		$modulesModel = new ModulesModel();
+		$result = new JsonModel($modulesModel->delController($moduleName, $controllerName));
+        return $result;						
+	}
+	
 	public function addmodelAction()
 	{
 		$request = $this->getRequest();
