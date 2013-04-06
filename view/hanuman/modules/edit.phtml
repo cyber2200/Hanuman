@@ -1,6 +1,8 @@
 <script type="text/javascript">
 var selectedModule = '<?=$selectedModule;?>';
 var Module = {
+	'fields' : [],
+	'crudController' : '',
 	'getControllers' : function()
 	{
 		$.ajax({
@@ -53,6 +55,9 @@ var Module = {
 	{
 		if ($("#crud").is(":checked"))
 		{
+			Module.fields = [{'name' : 'ID', 'type' : 'INT(255)'}];
+			Module.crudController = $("#newcontrollerName").val();
+			$("#crudTbl").html("<tr><th>Field Name</th><th>Type</th></tr><tr><td>ID</td><td>INT(255), Auto Increment, Primary Key</td></tr>");
 			Module.openPopUp('scaffoldForm');
 		}
 		else
@@ -139,12 +144,14 @@ var Module = {
 	},
 	addField : function()
 	{
-		var select = "<select>";
+		var newField = $("#newField").val();
+		var select = '<select id="'+ newField +'TypeSelect">';
 		select += '<option>VARCHAR(255)</option>';
 		select += '<option>INT(255)</option>';
 		select += '<option>TEXT</option>';
 		select += "</select>";
-		var newField = $("#newField").val();
+		var jsonEntity = {'name' : newField, 'type' : 'VARCHAR(255)'};
+		Module.fields.push(jsonEntity);
 		$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
 		$("#newField").val('');
 	},
@@ -155,6 +162,17 @@ var Module = {
 	openPopUp : function(id)
 	{
 		$("#" + id).show();
+	},
+	'generateCrud' : function()
+	{
+		for (var i = 0; i < Module.fields.length; i++)
+		{
+			if (Module.fields[i].name != 'ID')
+			{
+				Module.fields[i].type = $("#" + Module.fields[i].name + "TypeSelect").val();
+			}
+			alert(Module.fields[i].name + ' ' + Module.fields[i].type);
+		}
 	}
 };
 
@@ -226,7 +244,7 @@ $(document).ready(function(){
 			<form action="" onSubmit="return false;" class="form-search">
 				<input class="input-medium" type="text" id="newField" /> <input onClick="Module.addField();" class="btn" type="button" value="Add Field" />
 				<br /><br />
-				<input class="btn" type="button" value="Generate" /> <input onClick="Module.closePopUp('scaffoldForm');" class="btn" type="button" value="Cancel" />
+				<input onClick="Module.generateCrud();" class="btn" type="button" value="Generate" /> <input onClick="Module.closePopUp('scaffoldForm');" class="btn" type="button" value="Cancel" />
 			</form>
 		</div>
 	<center>

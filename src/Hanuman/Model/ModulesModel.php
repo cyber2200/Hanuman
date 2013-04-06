@@ -286,30 +286,20 @@ class ModulesModel
 		// Adding the new module to the application config
 		$appConfigPath = dirname(dirname($newModuleDir)) . '/config/application.config.php';
 		$bufferStr = file_get_contents($appConfigPath);
-		$startOfArray = strpos($bufferStr, "'modules' => array(");
-		$endOfArray = strpos($bufferStr, ")", $startOfArray);
-		$arrayLength = $endOfArray - $startOfArray + 1;
-		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
-		$end = strpos($originalString, ')');
-		$modulesArrayString = substr($originalString, 19, $end-19);
-		$modulesArray = explode(',', $modulesArrayString);
+		preg_match("/'modules'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		$modulesArray = explode(',', $matches[1]);
 		for ($i = 0; $i < count($modulesArray); $i++)
 		{
 			if (trim($modulesArray[$i]) == '')
 			{
 				unset($modulesArray[$i]);
 			}
-			else
-			{
-				$modulesArray[$i] = trim($modulesArray[$i]);
-			}
 		}
 		$modulesArray[] = "'" . $moduleName . "'";
-		
-		$newBlock = "'modules' => array(" . implode(', ', $modulesArray) . ")";
-		
-		$bufferStr = str_replace($originalString, $newBlock, $bufferStr);
-		
+		$newString = "'modules' => array(". implode(", ", $modulesArray) .")";
+		$bufferStr = str_replace($origString, $newString, $bufferStr, $c);
+		$bufferStr = $bufferStr . '//' . print_r($mathces, true);
 		if (file_put_contents($appConfigPath, $bufferStr) === FALSE)
 		{
 			return array(
@@ -329,16 +319,12 @@ class ModulesModel
 	 */
 	public function getModules()
 	{
-		$basePath = getcwd();
-		$configFile = $basePath . '/config/application.config.php';
-		$bufferStr = file_get_contents($configFile);
-		$startOfArray = strpos($bufferStr, "'modules' => array(");
-		$endOfArray = strpos($bufferStr, ")", $startOfArray);
-		$arrayLength = $endOfArray - $startOfArray + 1;
-		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
-		$end = strpos($originalString, ')');
-		$modulesArrayString = substr($originalString, 19, $end-19);
-		$modulesArray = explode(',', $modulesArrayString);
+		$appConfigPath = getcwd() . '/config/application.config.php';
+		$bufferStr = file_get_contents($appConfigPath);
+		preg_match("/'modules'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		$modulesArray = explode(',', $matches[1]);
+		
 		if (count($modulesArray) == 0)
 		{
 			return array(
@@ -373,16 +359,11 @@ class ModulesModel
 	public function deleteModule($moduleName)
 	{
 		// Delete the module from the application config
-		$basePath = getcwd();
-		$configFile = $basePath . '/config/application.config.php';
-		$bufferStr = file_get_contents($configFile);
-		$startOfArray = strpos($bufferStr, "'modules' => array(");
-		$endOfArray = strpos($bufferStr, ")", $startOfArray);
-		$arrayLength = $endOfArray - $startOfArray + 1;
-		$originalString = substr($bufferStr, $startOfArray, $arrayLength); 
-		$end = strpos($originalString, ')');
-		$modulesArrayString = substr($originalString, 19, $end-19);
-		$modulesArray = explode(',', $modulesArrayString);
+		$appConfigPath = getcwd() . '/config/application.config.php';
+		$bufferStr = file_get_contents($appConfigPath);
+		preg_match("/'modules'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		$modulesArray = explode(',', $matches[1]);
 		
 		for ($i = 0; $i < count($modulesArray); $i++)
 		{
@@ -395,9 +376,9 @@ class ModulesModel
 		
 		$newBlock = "'modules' => array(" . implode(', ', $modulesArray) . ")";
 		
-		$bufferStr = str_replace($originalString, $newBlock, $bufferStr);
+		$bufferStr = str_replace($origString, $newBlock, $bufferStr);
 		
-		if (file_put_contents($configFile, $bufferStr) === FALSE)
+		if (file_put_contents($appConfigPath, $bufferStr) === FALSE)
 		{
 			return array(
 				'success' => false,

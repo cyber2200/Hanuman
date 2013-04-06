@@ -6,6 +6,7 @@ return array(
 			'Hanuman\Controller\Modules' => 'Hanuman\Controller\ModulesController', 
             'index' => 'Hanuman\Controller\IndexController',
         	'Hanuman\Controller\Cms' => 'Hanuman\Controller\CmsController',
+			'Hanuman\Controller\Config' => 'Hanuman\Controller\ConfigController',
 		),
     ),
     'view_manager' => array(
