@@ -295,11 +295,14 @@ class ModulesModel
 			{
 				unset($modulesArray[$i]);
 			}
+			else
+			{
+				$modulesArray[$i] = trim($modulesArray[$i]);
+			}
 		}
 		$modulesArray[] = "'" . $moduleName . "'";
 		$newString = "'modules' => array(". implode(", ", $modulesArray) .")";
 		$bufferStr = str_replace($origString, $newString, $bufferStr, $c);
-		$bufferStr = $bufferStr . '//' . print_r($mathces, true);
 		if (file_put_contents($appConfigPath, $bufferStr) === FALSE)
 		{
 			return array(
