@@ -647,19 +647,17 @@ EOF;
 		$origString = $matches[0];
 		preg_match("/'invokables'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
 		$invokableArray = explode(",", $matches[1]);
-		$out = '';
 		for ($i = 0; $i < count($invokableArray); $i++)
 		{
-			//$filter = "/'{$moduleName}\Controller\\" . str_replace("Controller", "", $controllerName) . "' => '{$moduleName}\Controller\\" . $controllerName . "'/s";
-			//preg_match($filter, trim($invokableArray[$i]), $matches);
+			$filter = "/'{$moduleName}\\\Controller\\\\" . str_replace("Controller", "", $controllerName) . "'[\s|\n|\t]*=>[\s|\n|\t]*'{$moduleName}\\\\Controller\\\\" . $controllerName . "'/s";
+			preg_match($filter, trim($invokableArray[$i]), $matches);
 			
-			$str = "'{$moduleName}\Controller\\" . str_replace("Controller", "", $controllerName) . "' => '{$moduleName}\Controller\\" . $controllerName . "'";
-			if ($str == trim($invokableArray[$i]))
+			if (count($matches) > 0)
 			{
 				unset($invokableArray[$i]);
 			}
 		}	
-		
+
 		$arrStr = '';
 		foreach ($invokableArray as $controller)
 		{
