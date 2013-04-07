@@ -44,7 +44,7 @@ Add the Hanuman module to the appication config:
 
 Now, this is a code generator so we have to chnage the owner of the files to our web server user, in my case:
 
-* sudo chown -R www-data ./*
+* sudo chown -R www-data ../*
 
 Now you should be ready to use Hanuman:
 
