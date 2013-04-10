@@ -3,6 +3,7 @@ namespace Hanuman\Controller;
 
 use Hanuman\Model\ApplicationModel;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\View\Model\JsonModel;
 
 class ConfigController extends AbstractActionController
 {
@@ -11,6 +12,20 @@ class ConfigController extends AbstractActionController
 		$this->layout('layout/hanuman');	
 		$applicationModel = new ApplicationModel();
 		$dbConfig = $applicationModel->getDbConfig();
-        return array('dbConfig' => $dbConfig);
+		if (! $dbConfig)
+		{
+			$dbConfig = $applicationModel->getDbConfig();
+		}
+        return array(
+			'dbConfig' => $dbConfig,
+			'baseUrl' => $this->request->getBasePath(),
+		);
     }
+	
+	public function saveAction()
+	{
+		$postData = $request = $this->getRequest()->getPost();
+		$applicationModel = new ApplicationModel();
+		return(new JsonModel($applicationModel->saveConfig($postData)));
+	}
 }

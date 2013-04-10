@@ -4,7 +4,7 @@ namespace Hanuman\Model;
 class ApplicationModel
 {
 	public function getDbConfig()
-	{	
+	{
 		$globalPath = getcwd() . '/config/autoload/global.php';
 		$bufferStr = file_get_contents($globalPath);
 		$dbBlockStart = strpos($bufferStr, "'db' => ");
@@ -13,6 +13,7 @@ class ApplicationModel
 			$template = file_get_contents(__DIR__ . '/templates/app/global.php');
 			file_put_contents($globalPath, $template);
 			$this->getDbConfig();
+			
 		}
 		else
 		{
@@ -67,5 +68,37 @@ class ApplicationModel
 				'dbPass' => $dbPass,
 			);
 		}
+	}
+	
+	public function saveConfig($postData)
+	{
+		$appConfigPath = getcwd() . '/config/autoload/global.php';
+		$bufferStr = file_get_contents($appConfigPath);
+		preg_match("/'db'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origBlock = $matches[0];
+		$dbBlock = $matches[1];
+		preg_match("/'dsn'[\s\t\n]*=>[\s\t\n]*'(.*?)'/s", $dbBlock, $matches);
+		$origDsn = $matches[1];
+		$dsn = $matches[1];
+		preg_match("/mysql:dbname=(.*?);/s", $dsn, $matches);
+		$dsn = preg_replace("/^mysql:dbname=(.*?);/s", "mysql:dbname={$postData['dbName']};", $dsn);
+		$dsn = preg_replace("/;host=(.*?)$/s", ";host={$postData['dbHost']}", $dsn);
+		
+		$bufferStr = str_replace($origDsn, $dsn, $bufferStr);
+		$bufferStr = preg_replace("/'username'[\s\t\n]*=>[\s\t\n]*'(.*?)'/s", "'username' => '{$postData['dbUser']}'", $bufferStr);
+		$bufferStr = preg_replace("/'password'[\s\t\n]*=>[\s\t\n]*'(.*?)'/s", "'password' => '{$postData['dbPass']}'", $bufferStr);
+		
+		if (! file_put_contents($appConfigPath, $bufferStr))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $appConfigPath
+			);
+		}
+		
+		return array(
+			'success' => true,
+			'message' => ""
+		);
 	}
 }
