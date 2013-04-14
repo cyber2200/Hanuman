@@ -2,6 +2,7 @@
 var Config = {
 	'saveConfig' : function()
 	{
+		$("#configFeeder").html("Saving...");		
 		var postStr = '';
 		postStr += 'dbHost=' + $("#dbHost").val();
 		postStr += '&dbName=' + $("#dbName").val();
@@ -17,6 +18,26 @@ var Config = {
 				if (jsonObj.success)
 				{
 					$("#configFeeder").html("Configuration saved");		
+				}
+				else
+				{
+					$('#configFeeder').html(jsonObj.message);		
+				}
+			}
+		});
+	},
+	'testDbCon' : function()
+	{
+		$("#configFeeder").html("Testing...");		
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/config/testdbcon',
+			data : '',
+			success : function(jsonObj)
+			{
+				if (jsonObj.success)
+				{
+					$("#configFeeder").html("Good to go");		
 				}
 				else
 				{
@@ -70,7 +91,7 @@ var Config = {
 			<td>
 				<center>
 					<input onClick="Config.saveConfig();" class="btn" type="submit" value="Save" />
-					<input class="btn" type="submit" value="Test DB Connection" />
+					<input onClick="Config.testDbCon();" class="btn" type="submit" value="Test DB Connection" />
 				</center>
 			</td>
 		</tr>

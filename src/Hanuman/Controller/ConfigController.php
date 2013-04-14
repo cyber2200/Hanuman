@@ -28,4 +28,12 @@ class ConfigController extends AbstractActionController
 		$applicationModel = new ApplicationModel();
 		return(new JsonModel($applicationModel->saveConfig($postData)));
 	}
+	
+	public function testdbconAction()
+	{
+		$sm = $this->getServiceLocator();
+		$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+		$applicationModel = new ApplicationModel();
+		return(new JsonModel($applicationModel->testDbCon($dbAdapter)));
+	}
 }

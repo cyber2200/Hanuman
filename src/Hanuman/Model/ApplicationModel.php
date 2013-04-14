@@ -1,6 +1,8 @@
 <?php
 namespace Hanuman\Model;
 
+use Exception;
+
 class ApplicationModel
 {
 	public function getDbConfig()
@@ -100,5 +102,25 @@ class ApplicationModel
 			'success' => true,
 			'message' => ""
 		);
+	}
+	
+	public function testDbCon($dbAdapter)
+	{
+		try
+		{
+			$dbAdapter->query("SHOW TABLES;");
+			return array(
+				'success' => true,
+				'message' => ''
+			);	
+		}
+		catch(Exception $ex)
+		{
+			return array(
+				'success' => false,
+				'message' => $ex->getMessage()
+			);	
+		}
+
 	}
 }
