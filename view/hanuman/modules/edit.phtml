@@ -51,7 +51,7 @@ var Module = {
 			}
 		});
 	},	
-	addController : function()
+	'addController' : function()
 	{
 		if ($("#crud").is(":checked"))
 		{
@@ -83,7 +83,7 @@ var Module = {
 			});	
 		}
 	},
-	delController : function()
+	'delController' : function()
 	{
 		$('#controllersFeeder').html('Processing...');
 		$.ajax({
@@ -104,11 +104,11 @@ var Module = {
 			}
 		});	
 	},
-	editController : function()
+	'editController' : function()
 	{
 	
 	},
-	addModel : function()
+	'addModel' : function()
 	{
 		$('#modelsFeeder').html('Processing...');
 		$.ajax({
@@ -130,7 +130,7 @@ var Module = {
 			}
 		});	
 	},
-	delModel : function()
+	'delModel' : function()
 	{
 		var res = confirm("Are you sure?");
 		if (res)
@@ -155,11 +155,11 @@ var Module = {
 			});	
 		}
 	},
-	editModel : function()
+	'editModel' : function()
 	{
 	
 	},
-	addField : function()
+	'addField' : function()
 	{
 		var newField = $("#newField").val();
 		var select = '<select id="'+ newField +'TypeSelect">';
@@ -172,11 +172,11 @@ var Module = {
 		$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
 		$("#newField").val('');
 	},
-	closePopUp : function(id)
+	'closePopUp' : function(id)
 	{
 		$("#" + id).hide();
 	},
-	openPopUp : function(id)
+	'openPopUp' : function(id)
 	{
 		$("#" + id).show();
 	},
