@@ -55,9 +55,9 @@ var Module = {
 	{
 		if ($("#crud").is(":checked"))
 		{
-			Module.fields = [{'name' : 'ID', 'type' : 'INT(255)'}];
+			Module.fields = [{'name' : 'ID', 'type' : 'INT(255) PRIMARY KEY AUTO_INCREMENT'}];
 			Module.crudController = $("#newcontrollerName").val();
-			$("#crudTbl").html("<tr><th>Field Name</th><th>Type</th></tr><tr><td>ID</td><td>INT(255), Auto Increment, Primary Key</td></tr>");
+			$("#crudTbl").html("<tr><th>Field Name</th><th>Type</th></tr><tr><td>ID</td><td>INT(255) PRIMARY KEY AUTO_INCREMENT</td></tr>");
 			Module.openPopUp('scaffoldForm');
 		}
 		else
@@ -182,14 +182,18 @@ var Module = {
 	},
 	'generateCrud' : function()
 	{
+		var query = 'CREATE TABLE `'+ Module.crudController +'`(';
 		for (var i = 0; i < Module.fields.length; i++)
 		{
 			if (Module.fields[i].name != 'ID')
 			{
 				Module.fields[i].type = $("#" + Module.fields[i].name + "TypeSelect").val();
 			}
-			alert(Module.fields[i].name + ' ' + Module.fields[i].type);
+			query += Module.fields[i].name + ' ' + Module.fields[i].type + ', ';
 		}
+		query = query.substr(0, query.length - 2);
+		query += ');';
+		alert(query);
 	}
 };
 
