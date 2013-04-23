@@ -28,16 +28,37 @@ var Config = {
 	},
 	'testDbCon' : function()
 	{
-		$("#configFeeder").html("Testing...");		
+		var postStr = '';
+		postStr += 'dbHost=' + $("#dbHost").val();
+		postStr += '&dbName=' + $("#dbName").val();
+		postStr += '&dbUser=' + $("#dbUser").val();
+		postStr += '&dbPass=' + $("#dbPass").val();
+		
 		$.ajax({
 			type : 'POST',
-			url : '<?=$baseUrl;?>/Hanuman/config/testdbcon',
-			data : '',
+			url : '<?=$baseUrl;?>/Hanuman/config/save',
+			data : postStr,
 			success : function(jsonObj)
 			{
 				if (jsonObj.success)
 				{
-					$("#configFeeder").html("Good to go");		
+					$("#configFeeder").html("Testing...");		
+					$.ajax({
+						type : 'POST',
+						url : '<?=$baseUrl;?>/Hanuman/config/testdbcon',
+						data : '',
+						success : function(jsonObj)
+						{
+							if (jsonObj.success)
+							{
+								$("#configFeeder").html("Good to go");		
+							}
+							else
+							{
+								$('#configFeeder').html(jsonObj.message);		
+							}
+						}
+					});	
 				}
 				else
 				{
