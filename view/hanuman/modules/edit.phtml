@@ -182,18 +182,23 @@ var Module = {
 	},
 	'generateCrud' : function()
 	{
-		var query = 'CREATE TABLE `'+ Module.crudController +'`(';
-		for (var i = 0; i < Module.fields.length; i++)
-		{
-			if (Module.fields[i].name != 'ID')
+		$.ajax({
+			type : 'POST',
+			url : '<?=$baseUrl;?>/Hanuman/modules/addcrud',
+			data : 'moduleName=' + selectedModule + '&controllerName=' + Module.crudController + '&fields=' + JSON.stringify(Module.fields),
+			success : function(jsonObj)
 			{
-				Module.fields[i].type = $("#" + Module.fields[i].name + "TypeSelect").val();
+				if (jsonObj.success)
+				{
+					$('#modelsFeeder').html('Deleted successfully');
+					Module.getModels();
+				}
+				else
+				{
+					$('#modelsFeeder').html(jsonObj.message);
+				}
 			}
-			query += Module.fields[i].name + ' ' + Module.fields[i].type + ', ';
-		}
-		query = query.substr(0, query.length - 2);
-		query += ');';
-		alert(query);
+		});	
 	}
 };
 

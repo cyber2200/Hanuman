@@ -730,4 +730,21 @@ EOF;
 			'data' => ''
 		);		
 	}
+	
+	public function addCrud($moduleName, $controllerName, $fields)
+	{	
+		$fieldsArr = json_decode($fields);
+		
+		$query = "CREATE TABLE `$controllerName`(";
+		foreach ($fieldsArr as $field)
+		{
+			$query .= trim($field->name) . ' ' . trim($field->type) . ', ';
+		}
+		$query .= ');';
+		return array(
+			'success' => false,
+			'message' => $query,
+			'data' => ''
+		);	
+	}
 }
