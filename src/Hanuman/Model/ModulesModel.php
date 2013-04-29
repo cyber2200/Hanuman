@@ -1,8 +1,15 @@
 <?php
 namespace Hanuman\Model;
+use Exception;
 
 class ModulesModel
 {
+	protected $dbAdapter;
+	
+	public function setDbAdapter($dbAdapter)
+	{
+		$this->dbAdapter = $dbAdapter;
+	}
 	/**
 	 * This method will generate a new module including the following steps:
 	 * 1. Create the directory tree.
@@ -732,7 +739,7 @@ EOF;
 	}
 	
 	public function addCrud($moduleName, $controllerName, $fields)
-	{	
+	{
 		$fieldsArr = json_decode($fields);
 		
 		$query = "CREATE TABLE `$controllerName`(";
@@ -740,11 +747,26 @@ EOF;
 		{
 			$query .= trim($field->name) . ' ' . trim($field->type) . ', ';
 		}
+		$query = trim($query, ', ');
 		$query .= ');';
-		return array(
-			'success' => false,
-			'message' => $query,
-			'data' => ''
-		);	
+		
+		try
+		{
+			$e = $this->dbAdapter->query($query);
+			$e->execute();
+			return array(
+				'success' => true,
+				'message' => '',
+				'data' => ''
+			);	
+		}
+		catch(Exception $ex)
+		{
+			return array(
+				'success' => false,
+				'message' => $ex->getMessage(),
+				'data' => ''
+			);	
+		}
 	}
 }

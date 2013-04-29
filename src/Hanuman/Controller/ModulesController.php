@@ -118,11 +118,15 @@ class ModulesController extends AbstractActionController
 	
 	public function addcrudAction()
 	{
+		$sm = $this->getServiceLocator();
+		$dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+		
 		$request = $this->getRequest();
 		$controllerName = $request->getPost('controllerName', null);
 		$moduleName = $request->getPost('moduleName', null);
 		$fields = $request->getPost('fields', null);
 		$modulesModel = new ModulesModel();
+		$modulesModel->setDbAdapter($dbAdapter);
 		$result = new JsonModel($modulesModel->addCrud($moduleName, $controllerName, $fields));
         return $result;						
 	}

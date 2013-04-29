@@ -190,12 +190,11 @@ var Module = {
 			{
 				if (jsonObj.success)
 				{
-					$('#modelsFeeder').html('Deleted successfully');
-					Module.getModels();
+					$("#crudFeeder").html("Crated successfully.");
 				}
 				else
 				{
-					$('#modelsFeeder').html(jsonObj.message);
+					$("#crudFeeder").html(jsonObj.message);
 				}
 			}
 		});	
@@ -272,6 +271,7 @@ $(document).ready(function(){
 				<br /><br />
 				<input onClick="Module.generateCrud();" class="btn" type="button" value="Generate" /> <input onClick="Module.closePopUp('scaffoldForm');" class="btn" type="button" value="Cancel" />
 			</form>
+			<div id="crudFeeder"></div>
 		</div>
 	<center>
 </div>
