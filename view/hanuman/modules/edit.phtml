@@ -162,7 +162,7 @@ var Module = {
 	'addField' : function()
 	{
 		var newField = $("#newField").val();
-		var select = '<select id="'+ newField +'TypeSelect">';
+		var select = '<select onChange="Module.chnageFieldType(\''+ newField +'\');" id="'+ newField +'TypeSelect">';
 		select += '<option>VARCHAR(255)</option>';
 		select += '<option>INT(255)</option>';
 		select += '<option>TEXT</option>';
@@ -171,6 +171,16 @@ var Module = {
 		Module.fields.push(jsonEntity);
 		$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
 		$("#newField").val('');
+	},
+	'chnageFieldType' : function(fieldName)
+	{
+		for (var i = 0; i < Module.fields.length; i++)
+		{
+			if (Module.fields[i].name == fieldName)
+			{
+				Module.fields[i].type = $('#' + fieldName + 'TypeSelect').val();
+			}
+		}
 	},
 	'closePopUp' : function(id)
 	{
@@ -191,6 +201,8 @@ var Module = {
 				if (jsonObj.success)
 				{
 					$("#crudFeeder").html("Crated successfully.");
+					Module.closePopUp('scaffoldForm');
+					Module.getControllers();
 				}
 				else
 				{

@@ -599,6 +599,116 @@ EOF;
 		);			
 	}
 	
+	public function createCrudController($moduleName, $newControllerName, $fields)
+	{
+		// /src/TempModule/Controller/IndexController.php
+		$templateDir = __DIR__ . '/templates/module';
+		$filename = '/src/TempModule/Controller/IndexController.php';
+		$moduleDir = getcwd() . '/module/' . $moduleName;
+		
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', $newControllerName, $bufferStr);
+		
+		if (file_put_contents($moduleDir . "/src/{$moduleName}/Controller/". $newControllerName ."Controller.php", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $moduleDir . "/src/{$moduleName}/Controller/". $newControllerName ."Controller.php",
+			);			
+		}
+		
+		// Adding to invokables
+		$bufferStr = file_get_contents($moduleDir . '/config/module.config.php');
+		preg_match("/'controllers'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$origString = $matches[0];
+		preg_match("/'invokables'[\s|\n|\t]*=>[\s|\n|\t]*array\((.*?)\)/s", $bufferStr, $matches);
+		$invokableArray = explode(",", $matches[1]);
+		$invokableArray[] = "'" . $moduleName ."\Controller\\". $newControllerName ."' => '". $moduleName ."\Controller\\". $newControllerName ."Controller'";
+		$arrStr = '';
+		for ($i = 0; $i < count($invokableArray); $i++)
+		{
+			if (trim($invokableArray[$i]) == '')
+			{
+				unset($invokableArray[$i]);
+			}
+		}
+		
+		foreach ($invokableArray as $controller)
+		{
+			$arrStr .= "\t\t\t" . trim($controller) . ",\n";
+		}
+		$arrStr .= "\t\t";
+		
+$newStr =<<< EOF
+'controllers' => array(
+		'invokables' => array(\n##INVOKABLES##)
+EOF;
+		
+		$newStr = str_replace("##INVOKABLES##", $arrStr, $newStr);
+		$bufferStr = str_replace($origString, $newStr, $bufferStr);
+		if (file_put_contents($moduleDir . '/config/module.config.php', $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $templateDir . $filename
+			);			
+		}
+		
+		// Turning from ModuleName to module-name
+		$moduleViewsDir = $moduleName;
+		$moduleViewsDir[0] = strtolower($moduleViewsDir[0]);
+		$caps = array();
+		for ($i = 0; $i < strlen($moduleViewsDir); $i++)
+		{
+			if (ctype_upper($moduleViewsDir[$i]))
+			{
+				$caps[] = $i;
+			}
+		}
+		$p1 = '';
+		$p2 = '';
+		$offset = 0;
+		foreach ($caps as $cap)
+		{
+			$p1 = substr($moduleViewsDir, 0, $cap+$offset);
+			$p2 = substr($moduleViewsDir, $cap+$offset);
+			$p1[strlen($p1)] = '-';
+			$p2[0] = strtolower($p2[0]);
+			$offset++;
+			$moduleViewsDir = $p1 . $p2;
+		}
+		
+		if (! mkdir($moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($newControllerName)))
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't create direcotry: " . $moduleDir . '/view/' . $moduleViewsDir . '/' . strtolower($newControllerName)
+			);
+		}
+		
+		// /view/{$moduleViewsDir}/index/index.phtml
+		$filename = "/view/temp-module/index/index.phtml";
+		$bufferStr = file_get_contents($templateDir . $filename);
+		$bufferStr = str_replace('##MOUDLE_NAME##', $moduleName, $bufferStr);
+		$bufferStr = str_replace('##CONTROLLER_NAME##', $newControllerName, $bufferStr);
+		$bufferStr = str_replace('##ACTION_NAME##', 'index', $bufferStr);
+		
+		if (file_put_contents($moduleDir . "/view/{$moduleViewsDir}/". strtolower($newControllerName) ."/index.phtml", $bufferStr) === FALSE)
+		{
+			return array(
+				'success' => false,
+				'message' => "Can't write file: " . $newModuleDir . "/view/{$moduleViewsDir}/index/index.phtml",
+			);			
+		}
+		
+		return array(
+			'success' => true,
+			'message' => '',
+			'data' => ''
+		);			
+	}
+	
 	public function createModel($moduleName, $newModelName)
 	{
 		$moduleDir = getcwd() . '/module/' . $moduleName;
@@ -754,6 +864,7 @@ EOF;
 		{
 			$e = $this->dbAdapter->query($query);
 			$e->execute();
+			$this->createCrudController($moduleName, $controllerName);
 			return array(
 				'success' => true,
 				'message' => '',
