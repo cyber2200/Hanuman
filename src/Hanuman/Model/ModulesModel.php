@@ -491,6 +491,11 @@ class ModulesModel
 	
 	public function createController($moduleName, $newControllerName)
 	{
+		$res = $this->checkClassName($newControllerName);
+		if (! $res['success'])
+		{
+			return $res;
+		}
 		// /src/TempModule/Controller/IndexController.php
 		$templateDir = __DIR__ . '/templates/module';
 		$filename = '/src/TempModule/Controller/IndexController.php';
@@ -710,7 +715,12 @@ EOF;
 	}
 	
 	public function createModel($moduleName, $newModelName)
-	{
+	{	
+		$res = $this->checkClassName($newModelName);
+		if (! $res['success'])
+		{
+			return $res;
+		}
 		$moduleDir = getcwd() . '/module/' . $moduleName;
 		$templateDir = __DIR__ . '/templates/module';
 		
@@ -851,8 +861,8 @@ EOF;
 	public function addCrud($moduleName, $controllerName, $fields)
 	{
 		$fieldsArr = json_decode($fields);
-		
-		$query = "CREATE TABLE `$controllerName`(";
+		$tableName = strtolower($controllerName);
+		$query = "CREATE TABLE `$tableName`(";
 		foreach ($fieldsArr as $field)
 		{
 			$query .= trim($field->name) . ' ' . trim($field->type) . ', ';
@@ -875,9 +885,32 @@ EOF;
 		{
 			return array(
 				'success' => false,
-				'message' => $ex->getMessage(),
+				'message' => $ex->getMessage() . ' : ' . $query,
 				'data' => ''
 			);	
 		}
+	}
+	
+	protected function checkClassName($className)
+	{
+		if ($className == '')
+		{
+			return array(
+				'success' => false,
+				'message' => "Class name can't be empty",
+			);					
+		}
+		if ( !ctype_upper($className[0]))
+		{
+			return array(
+				'success' => false,
+				'message' => "Class name most start with upper case letter",
+			);							
+		}
+		
+		return array(
+			'success' => true, 
+			'message' => ''
+		);
 	}
 }

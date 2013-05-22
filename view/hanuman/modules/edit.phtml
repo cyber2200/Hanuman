@@ -59,6 +59,7 @@ var Module = {
 			Module.crudController = $("#newcontrollerName").val();
 			$("#crudTbl").html("<tr><th>Field Name</th><th>Type</th></tr><tr><td>ID</td><td>INT(255) PRIMARY KEY AUTO_INCREMENT</td></tr>");
 			Module.openPopUp('scaffoldForm');
+			$("#crudFeeder").html("");
 		}
 		else
 		{
@@ -161,16 +162,19 @@ var Module = {
 	},
 	'addField' : function()
 	{
-		var newField = $("#newField").val();
-		var select = '<select onChange="Module.chnageFieldType(\''+ newField +'\');" id="'+ newField +'TypeSelect">';
-		select += '<option>VARCHAR(255)</option>';
-		select += '<option>INT(255)</option>';
-		select += '<option>TEXT</option>';
-		select += "</select>";
-		var jsonEntity = {'name' : newField, 'type' : 'VARCHAR(255)'};
-		Module.fields.push(jsonEntity);
-		$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
-		$("#newField").val('');
+		if ($("#newField").val() != '')
+		{
+			var newField = $("#newField").val();
+			var select = '<select onChange="Module.chnageFieldType(\''+ newField +'\');" id="'+ newField +'TypeSelect">';
+			select += '<option>VARCHAR(255)</option>';
+			select += '<option>INT(255)</option>';
+			select += '<option>TEXT</option>';
+			select += "</select>";
+			var jsonEntity = {'name' : newField, 'type' : 'VARCHAR(255)'};
+			Module.fields.push(jsonEntity);
+			$("#crudTbl").append("<tr><td>"+ newField +"</td><td>" + select + "</td></tr>");
+			$("#newField").val('');
+		}
 	},
 	'chnageFieldType' : function(fieldName)
 	{
@@ -203,6 +207,7 @@ var Module = {
 					$("#crudFeeder").html("Crated successfully.");
 					Module.closePopUp('scaffoldForm');
 					Module.getControllers();
+					$("#newcontrollerName").val('');
 				}
 				else
 				{
